@@ -131,12 +131,13 @@ body {
 
 .centerblock {
   width: 40%;
-  margin: 80px auto;
+  margin: 40px auto;
   text-align: center;
 }
 
 h1 {
-  font-size: 2.8rem;
+  font-size: 3.2rem;
+  margin-bottom: 15px;
 }
 
 .centerblock p {
@@ -144,36 +145,44 @@ h1 {
   margin: auto;
   font-size: 0.9rem;
   color: #666;
-  line-height: 30px;
+  line-height: 25px;
 }
 
-input[type="text"] {
-  width: 40%;
+.centerblock form {
+  text-align: justify;
+  margin-top: 40px;
+}
+
+.centerblock input[type="text"] {
+  width: 47%;
   display: inline-block;
   margin: auto;
-  padding: 7px 15px;
+  padding: 10px 20px;
 }
 
-textarea {
+.centerblock textarea {
   width: 100%;
   padding: 7px 15px;
+  margin-top: 20px;
 }
 
 .register {
   font-size: 1.2rem;
-  margin-top: 50px;
-  display: inline-block;
-  padding: 10px 20px;
-  border-bottom: 100% solid #008BF8;
-  color: #fff;
-  font-weight: 300;
-  letter-spacing: 0.8px;
-  border-radius: 2px;
-  -webkit-box-sizing: border-box;
+    margin-top: 50px;
+    display: inline-block;
+    padding: 10px 20px;
+    border-bottom: 100% solid #008BF8 !important;
+    border: none;
+    color: #fff;
+    font-weight: 300;
+    letter-spacing: 0.8px;
+    border-radius: 2px;
+    -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-  position: relative;
-  transition: 0.4s;
+    position: relative;
+    transition: 0.4s;
+    background: none;
 }
 
 .filler {
@@ -190,6 +199,8 @@ textarea {
 .register:hover {
   color: #008BF8;
   transition: 0.4s;
+  cursor: pointer;
+  cursor: hand;
 }
 
 .register:hover .filler {
@@ -204,7 +215,7 @@ textarea {
   font-size: 0.9rem;
   padding: 10px 20px;
   line-height: 25px;
-  margin-top: 70px;
+  margin-top: 40px;
 }
 
 </style>
@@ -214,9 +225,9 @@ textarea {
 
 <div class="container">
   <div class="nav">
-    <div class="logo">
+    <a style="color: #222;" href="/"><div class="logo">
       assetic
-    </div>
+    </div></a>
     <div class="search">
       <form>
         <input type="text" name="search" id="search" placeholder="Search for an owner (e.g. 0x35b7...) or an ItemId (e.g. 345)">
@@ -237,12 +248,12 @@ textarea {
     
     <div class="centerblock">
       <h1>Register your asset</h1>
-      <p>Here you can register an item by providing details on what type of code it uses, the code itself, and a short description. You will become the owner of a tokenId that represents the asset, which can be traded from here on out.</p>
+      <p>Here you can register an item by providing details on the type of code you'll enter, the code itself, and a short description. You will become the owner of a tokenId that represents the asset, which can be traded from here on out.</p>
       <form method="post" action="">
       <input type="text" name="identifier" id="identifier" placeholder="e.g. Barcode">
       <input type="text" name="code" id="code" placeholder="e.g. 1234567890-abcde">
-      <textarea rows="4" name="description" id="description" placeholder="Dell AC Adapter 19.5V --- 3.34A Model No. LA65NM130">
-      <a href="#"><div class="register">Register my asset<div class="filler"></div></div></a>
+      <textarea rows="4" name="description" id="description" placeholder="Dell AC Adapter 19.5V --- 3.34A Model No. LA65NM130"></textarea>
+      <button class="register">Register my asset<div class="filler"></div></button>
       </form>
        <div class="disclaimer">
         It is very important that you <a href="#">read this</a> before using this decentralized application. Using this product means you have agreed to these terms.
