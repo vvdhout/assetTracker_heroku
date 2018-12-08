@@ -22,7 +22,11 @@ contract('assetTracker', accounts => {
 		})
 
 		it('can get item data based on tokenId', async function() {
-			assert.equal(await this.contract.getItemByToken(1, {from: accounts[0]}), [identifier, code, description])
+			// console.log(await this.contract.getItemByToken(1, {from: accounts[0]}));
+
+			let results = await this.contract.getItemByToken(1, {from: accounts[0]})
+			console.log(results);
+			assert.equal([results[0],results[1],results[2]], [identifier, code, description]);
 		})
 
 		// it('can put the star on sale if ownership passes', async function() {
