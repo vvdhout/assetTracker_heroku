@@ -1,0 +1,256 @@
+<DOCTYPE! html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width">
+  <meta charset="utf-8">
+
+  <title>Register An Item - Asset Ownership Tracking on the Ethereum Blockchain</title>
+  <meta name="description" content="Here you can register an item by providing details on what type of code it uses, the code itself, and a short description. You will become the owner of a tokenId that represents the asset, which can be traded from here on out.">
+
+  <!-- <link rel="stylesheet" type="text/css" src="../css/style.css"> -->
+
+  <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+
+</head>
+
+<style>
+
+body {
+  color: #222;
+  font-family: Calibri, Arial;
+  font-size: 0;
+  margin: 0;
+  background-color: #F9F9F9;
+}
+
+.nav {
+  padding: 20px 40px;
+  -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  border-bottom: 0.5px solid lightgrey;
+}
+
+.nav div {
+  display: inline-block;
+  vertical-align: middle;
+  -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.nav .logo {
+  width: 15%;
+  font-size: 1.8rem;
+  letter-spacing: 5px;
+  font-weight: 600;
+}
+
+.nav .search {
+  width: 50%;
+}
+
+.nav .search #search {
+  width: 80%;
+  margin-right: 1%;
+  padding: 10px;
+  -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  letter-spacing: 0.8px;
+}
+
+.nav .search #submit {
+  padding: 10px;
+  background-color: #008BF8;
+  border: 2px solid #008BF8;
+  color: #fff;
+  font-weight: 400;
+  letter-spacing: 0.8px;
+  border-radius: 2px;
+  -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#submit:hover {
+  cursor: pointer;
+  cursor: hand;
+  opacity: 0.8;
+}
+
+.nav .buttons {
+  width: 35%;
+  text-align: right;
+}
+
+.nav .buttons ul {
+  list-style: none;
+}
+
+.nav .buttons ul li {
+  display: inline-block;
+  padding: 0 5%;
+  color: #333;
+  -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  font-size: 1rem;
+}
+
+.nav .buttons ul a:hover li {
+  color: #29CE9A
+}
+
+#signup {
+  padding: 10px;
+  background-color: #008BF8;
+  border: 2px solid #008BF8;
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  border-radius: 2px;
+  -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+#signup:hover {
+  cursor: pointer;
+  cursor: hand;
+  opacity: 0.8;
+}
+
+/* Home */
+.home {
+  font-family: Arial;
+  text-align: center;
+}
+
+.centerblock {
+  width: 40%;
+  margin: 80px auto;
+  text-align: center;
+}
+
+h1 {
+  font-size: 2.8rem;
+}
+
+.centerblock p {
+  width: 90%;
+  margin: auto;
+  font-size: 0.9rem;
+  color: #666;
+  line-height: 30px;
+}
+
+input[type="text"] {
+  width: 40%;
+  display: inline-block;
+  margin: auto;
+  padding: 7px 15px;
+}
+
+textarea {
+  width: 100%;
+  padding: 7px 15px;
+}
+
+.register {
+  font-size: 1.2rem;
+  margin-top: 50px;
+  display: inline-block;
+  padding: 10px 20px;
+  border-bottom: 100% solid #008BF8;
+  color: #fff;
+  font-weight: 300;
+  letter-spacing: 0.8px;
+  border-radius: 2px;
+  -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  position: relative;
+  transition: 0.4s;
+}
+
+.filler {
+  background-color: #008BF8;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  z-index: -999;
+  left: 0;
+  bottom: 0;
+  transition: 0.4s;
+}
+
+.register:hover {
+  color: #008BF8;
+  transition: 0.4s;
+}
+
+.register:hover .filler {
+  height: 3px;
+  bottom: 0;
+  transition: 0.4s;
+}
+
+.disclaimer {
+  border: 0.5px solid red;
+  background-color: #fff;
+  font-size: 0.9rem;
+  padding: 10px 20px;
+  line-height: 25px;
+  margin-top: 70px;
+}
+
+</style>
+
+
+<body>
+
+<div class="container">
+  <div class="nav">
+    <div class="logo">
+      assetic
+    </div>
+    <div class="search">
+      <form>
+        <input type="text" name="search" id="search" placeholder="Search for an owner (e.g. 0x35b7...) or an ItemId (e.g. 345)">
+        <input type="submit" name="submit" value="Find" id="submit">
+      </form>
+    </div>
+    <div class="buttons">
+      <ul>
+        <a href="#"><li>How does it work</li></a>
+        <a href="#"><li>About</li></a>
+        <a href="#"><li><u>Log In</u></li></a>
+        <a href="#"><li id="signup">SIGN UP</li></a>
+      </ul>
+    </div>
+  </div>
+  
+  <div class="home">
+    
+    <div class="centerblock">
+      <h1>Register your asset</h1>
+      <p>Here you can register an item by providing details on what type of code it uses, the code itself, and a short description. You will become the owner of a tokenId that represents the asset, which can be traded from here on out.</p>
+      <form method="post" action="">
+      <input type="text" name="identifier" id="identifier" placeholder="e.g. Barcode">
+      <input type="text" name="code" id="code" placeholder="e.g. 1234567890-abcde">
+      <textarea rows="4" name="description" id="description" placeholder="Dell AC Adapter 19.5V --- 3.34A Model No. LA65NM130">
+      <a href="#"><div class="register">Register my asset<div class="filler"></div></div></a>
+      </form>
+       <div class="disclaimer">
+        It is very important that you <a href="#">read this</a> before using this decentralized application. Using this product means you have agreed to these terms.
+      </div>
+    </div>
+    
+  </div>
+
+</div>
+
+</body>
