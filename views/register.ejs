@@ -250,9 +250,9 @@ h1 {
       <h1>Register your asset</h1>
       <p>Here you can register an item by providing details on the type of code you'll enter, the code itself, and a short description. You will become the owner of a tokenId that represents the asset, which can be traded from here on out.</p>
       <form method="post" action="">
-      <input type="text" name="identifier" id="identifier" placeholder="e.g. Barcode">
-      <input type="text" name="code" id="code" placeholder="e.g. 1234567890-abcde">
-      <textarea rows="4" name="description" id="description" placeholder="Dell AC Adapter 19.5V --- 3.34A Model No. LA65NM130"></textarea>
+      <input type="text" name="identifier" id="identifier" placeholder="e.g. Barcode" required>
+      <input type="text" name="code" id="code" placeholder="e.g. 1234567890-abcde" required>
+      <textarea rows="4" name="description" id="description" placeholder="Dell AC Adapter 19.5V --- 3.34A Model No. LA65NM130" required></textarea>
       <button class="register">Register my asset<div class="filler"></div></button>
       </form>
        <div class="disclaimer">
@@ -265,3 +265,500 @@ h1 {
 </div>
 
 </body>
+
+
+<script>
+
+// Connect to Ethereum Network/Blockchain
+
+if (typeof web3 !== 'undefined') {
+  web3 = new Web3(web3.currentProvider);
+  console.log('We already have a provider.');
+} else {
+  web3 = new Web3(new Web3.providers.HttpProvider("http://localhost:8545")); 
+  console.log('We have set a new provider on Ganache chain at localhost:8454');
+}
+
+// Set Account
+web3.eth.defaultAccount = web3.eth.accounts[0];
+console.log('Default account: ' + web3.eth.defaultAccount);
+
+// Provide ABI to smart contract
+const assetTrackerContracts = web3.eth.contract([
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_approved",
+        "type": "address"
+      },
+      {
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "approve",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "burnItem",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "buyItem",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_tokenId",
+        "type": "uint256"
+      },
+      {
+        "name": "_price",
+        "type": "uint256"
+      }
+    ],
+    "name": "putOnSale",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_identifier",
+        "type": "string"
+      },
+      {
+        "name": "_code",
+        "type": "string"
+      },
+      {
+        "name": "_description",
+        "type": "string"
+      }
+    ],
+    "name": "registerItem",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_from",
+        "type": "address"
+      },
+      {
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "safeTransferFrom",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_operator",
+        "type": "address"
+      },
+      {
+        "name": "_approved",
+        "type": "bool"
+      }
+    ],
+    "name": "setApprovalForAll",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_tokenId",
+        "type": "uint256"
+      },
+      {
+        "name": "_reservedBuyer",
+        "type": "address"
+      }
+    ],
+    "name": "setReserved",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_from",
+        "type": "address"
+      },
+      {
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "transferFrom",
+    "outputs": [],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "name": "_tokenId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "name": "_identifier",
+        "type": "string"
+      },
+      {
+        "indexed": true,
+        "name": "_code",
+        "type": "string"
+      }
+    ],
+    "name": "ItemRegistered",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "name": "_from",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "Transfer",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "name": "_owner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "name": "_approved",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "Approval",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "name": "_owner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "name": "_operator",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "_approved",
+        "type": "bool"
+      }
+    ],
+    "name": "ApprovalForAll",
+    "type": "event"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_owner",
+        "type": "address"
+      }
+    ],
+    "name": "balanceOf",
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_identifier",
+        "type": "string"
+      },
+      {
+        "name": "_code",
+        "type": "string"
+      }
+    ],
+    "name": "doesItemExist",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getApproved",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getItemByToken",
+    "outputs": [
+      {
+        "name": "identifier",
+        "type": "string"
+      },
+      {
+        "name": "code",
+        "type": "string"
+      },
+      {
+        "name": "description",
+        "type": "string"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "getReserved",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_owner",
+        "type": "address"
+      },
+      {
+        "name": "_operator",
+        "type": "address"
+      }
+    ],
+    "name": "isApprovedForAll",
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "isOnSale",
+    "outputs": [
+      {
+        "name": "_onSale",
+        "type": "bool"
+      },
+      {
+        "name": "_price",
+        "type": "uint256"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "_tokenId",
+        "type": "uint256"
+      }
+    ],
+    "name": "ownerOf",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  }
+]);
+
+// Connect to smart contract
+const assetTracker = assetTrackerContract.at('0xfd33e0c055eab7bfce118e9188ae03f9ab48833c');
+
+
+/* ================================================================================================================================================
+=========== Starting actual functionality =========================================================================================================
+================================================================================================================================================ */
+
+// Ability to register an item
+$('.register').click( function() {
+  assetTracker.registerItem($('#identifier').val(), $('#code').val(), $('#description').val(), function(error, result) {
+    if (error) {
+      console.log(error);
+      location.reload();
+    } else {
+      console.log('Succesfully registered item. It will take some time before the transaction is executed. One moment please...');
+      setTimeout(function() {
+          location.reload();
+          }, 2000);
+    }
+  })
+})
+
+
+// Watching for register event
+assetTracker.ItemRegistered().watch(function(error, result) {
+  if(!error) {
+    // Code when there is no error (use --> _tokenId, _identifier, _code)
+  } else {
+    // Code when there is an error.
+  }
+}
+
+// Watch for transfer event 
+assetTracker.Transfer().watch(function(error, result) {
+  if(error) {
+    console.log(error);
+  } else {
+    console.log(result);
+  }
+})
+
+</script>
