@@ -248,13 +248,11 @@ h1 {
     
     <div class="centerblock">
       <h1>Register your asset</h1>
-      <p>Here you can register an item by providing details on the type of code you'll enter, the code itself, and a short description. You will become the owner of a tokenId that represents the asset, which can be traded from here on out.</p>
-      <form>
+      <p>Here you can register an item by providing details on the type of code you will enter, the code itself, and a short description. You will become the owner of a tokenId that represents the asset, which can be traded from here on out.</p>
       <input type="text" name="identifier" id="identifier" placeholder="e.g. Barcode" required>
       <input type="text" name="code" id="code" placeholder="e.g. 1234567890-abcde" required>
       <textarea rows="4" name="description" id="description" placeholder="Dell AC Adapter 19.5V --- 3.34A Model No. LA65NM130" required></textarea>
       <button class="register">Register my asset<div class="filler"></div></button>
-      </form>
        <div class="disclaimer">
         It is very important that you <a href="#">read this</a> before using this decentralized application. Using this product means you have agreed to these terms.
       </div>
@@ -284,7 +282,7 @@ web3.eth.defaultAccount = web3.eth.accounts[0];
 console.log('Default account: ' + web3.eth.defaultAccount);
 
 // Provide ABI to smart contract
-const assetTrackerContracts = web3.eth.contract([
+const assetTrackerContract = web3.eth.contract([
   {
     "constant": false,
     "inputs": [
@@ -329,6 +327,20 @@ const assetTrackerContracts = web3.eth.contract([
     "outputs": [],
     "payable": true,
     "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_sure",
+        "type": "uint256"
+      }
+    ],
+    "name": "killContract",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -720,7 +732,7 @@ const assetTrackerContracts = web3.eth.contract([
 ]);
 
 // Connect to smart contract
-const assetTracker = assetTrackerContract.at('0xfd33e0c055eab7bfce118e9188ae03f9ab48833c');
+const assetTracker = assetTrackerContract.at('0xf7bded4bca9610fb30215d86bb55cbb44d037120');
 
 
 /* ================================================================================================================================================
@@ -729,15 +741,16 @@ const assetTracker = assetTrackerContract.at('0xfd33e0c055eab7bfce118e9188ae03f9
 
 // Ability to register an item
 $('.register').click( function() {
+  web3.eth.defaultAccount = web3.eth.accounts[0];
   assetTracker.registerItem($('#identifier').val(), $('#code').val(), $('#description').val(), function(error, result) {
     if (error) {
-      console.log(error);
+      alert(error);
       location.reload();
     } else {
-      console.log('Succesfully registered item. It will take some time before the transaction is executed. One moment please...');
+      alert('Succesfully registered item. It will take some time before the transaction is executed. One moment please...');
       setTimeout(function() {
           location.reload();
-          }, 2000);
+          }, 50);
     }
   })
 })
@@ -746,18 +759,18 @@ $('.register').click( function() {
 // Watching for register event
 assetTracker.ItemRegistered().watch(function(error, result) {
   if(!error) {
-    // Code when there is no error (use --> _tokenId, _identifier, _code)
+    alert(result)
   } else {
-    // Code when there is an error.
+    alert(error)
   }
-}
+});
 
 // Watch for transfer event 
 assetTracker.Transfer().watch(function(error, result) {
   if(error) {
-    console.log(error);
+    alert(error);
   } else {
-    console.log(result);
+    alert(result);
   }
 })
 

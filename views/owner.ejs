@@ -4,14 +4,12 @@
   <meta name="viewport" content="width=device-width">
   <meta charset="utf-8">
 
-  <title>Asset Ownership Tracking on the Ethereum Blockchain</title>
-  <meta name="description" content="Assetic allows anyone to register physical assets under their ownership on the blockchain, allowing for verification and ownership transfer via smart contracts.">
+  <title>Register An Item - Asset Ownership Tracking on the Ethereum Blockchain</title>
+  <meta name="description" content="Here you can register an item by providing details on what type of code it uses, the code itself, and a short description. You will become the owner of a tokenId that represents the asset, which can be traded from here on out.">
 
   <!-- <link rel="stylesheet" type="text/css" src="../css/style.css"> -->
 
-  // Provide Web3 framework
   <script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js/dist/web3.min.js"></script>
-  // Provide jQuery framework
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 
 
@@ -133,37 +131,58 @@ body {
 
 .centerblock {
   width: 40%;
-  margin: 80px auto;
+  margin: 40px auto;
   text-align: center;
 }
 
 h1 {
-  font-size: 3.3rem;
+  font-size: 3.2rem;
+  margin-bottom: 15px;
 }
 
 .centerblock p {
   width: 90%;
   margin: auto;
-  font-size: 1.1rem;
+  font-size: 0.9rem;
   color: #666;
-  line-height: 30px;
+  line-height: 25px;
+}
+
+.centerblock form {
+  text-align: justify;
+  margin-top: 40px;
+}
+
+.centerblock input[type="text"] {
+  width: 47%;
+  display: inline-block;
+  margin: auto;
+  padding: 10px 20px;
+}
+
+.centerblock textarea {
+  width: 100%;
+  padding: 7px 15px;
+  margin-top: 20px;
 }
 
 .register {
   font-size: 1.2rem;
-  margin-top: 50px;
-  display: inline-block;
-  padding: 10px 20px;
-  border-bottom: 100% solid #008BF8;
-  color: #fff;
-  font-weight: 300;
-  letter-spacing: 0.8px;
-  border-radius: 2px;
-  -webkit-box-sizing: border-box;
+    margin-top: 50px;
+    display: inline-block;
+    padding: 10px 20px;
+    border-bottom: 100% solid #008BF8 !important;
+    border: none;
+    color: #fff;
+    font-weight: 300;
+    letter-spacing: 0.8px;
+    border-radius: 2px;
+    -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
-  position: relative;
-  transition: 0.4s;
+    position: relative;
+    transition: 0.4s;
+    background: none;
 }
 
 .filler {
@@ -180,6 +199,8 @@ h1 {
 .register:hover {
   color: #008BF8;
   transition: 0.4s;
+  cursor: pointer;
+  cursor: hand;
 }
 
 .register:hover .filler {
@@ -194,7 +215,33 @@ h1 {
   font-size: 0.9rem;
   padding: 10px 20px;
   line-height: 25px;
-  margin-top: 70px;
+  margin-top: 40px;
+}
+
+.whoowns {
+  padding: 50px 100px;
+  margin: auto;
+  width: 70%;
+  text-align: left;
+}
+
+.whoowns p {
+  font-size: 1rem;
+}
+
+.whoowns input {
+  padding: 10px 20px;
+  width: 40%;
+}
+
+.whoowns #tokenId {
+  margin-right: 40px;
+}
+
+.whoowns button {
+  padding: 5px 10px;
+  font-size: 0.9rem;
+  margin-right: 40px;
 }
 
 </style>
@@ -225,13 +272,11 @@ h1 {
   
   <div class="home">
     
-    <div class="centerblock">
-      <h1>Register any asset with your ownership</h1>
-      <p>Assetic allows you to register any physical asset on the Ethereum blockchain by providing an identification of the asset together with a description. A digital token which will represent the asset can now be tracked and transfered between any two persons all over the world.</p>
-      <a href="/register/"><div class="register">Register my asset<div class="filler"></div></div></a>
-       <div class="disclaimer">
-        It is very important that you <a href="#">read this</a> before using this decentralized application. Using this product means you have agreed to these terms.
-      </div>
+    <div class="whoowns">
+    <p>Enter a tokenId below and find the ETH address of the owner.</p>
+    <input type="number" id="tokenId" placeholder="TokenId (e.g. 334)">
+    <button id="getOwner">Get Owner</button>
+    <input type="text" id="address" placeholder="0x34f..." disabled>
     </div>
     
   </div>
@@ -239,6 +284,7 @@ h1 {
 </div>
 
 </body>
+
 
 <script>
 
@@ -257,7 +303,7 @@ web3.eth.defaultAccount = web3.eth.accounts[0];
 console.log('Default account: ' + web3.eth.defaultAccount);
 
 // Provide ABI to smart contract
-const assetTrackerContracts = web3.eth.contract([
+const assetTrackerContract = web3.eth.contract([
   {
     "constant": false,
     "inputs": [
@@ -715,80 +761,16 @@ const assetTracker = assetTrackerContract.at('0xf7bded4bca9610fb30215d86bb55cbb4
 ================================================================================================================================================ */
 
 // Ability to register an item
-assetTracker.registerItem(_identifier, _code, _description, function(error, result) {
-  if (error) {
-    console.log(error);
-  } else {
-    console.log('Succesfully registered item. It will take some time before the transaction is executed. One moment please...');
-  }
-})
-
-
-// Watching for register event
-assetTracker.ItemRegistered().watch(function(error, result) {
-  if(!error) {
-    // Code when there is no error (use --> _tokenId, _identifier, _code)
-  } else {
-    // Code when there is an error.
-  }
-})
-
-// Putting an item on sale
-assetTracker.putOnSale(_tokenId, _price, function(error, result) {
-  if (error) {
-    console.log(error);
-  } else {
-    console.log('Item will be put on sale soon.')
-  }
-})
-
-// Get item info by tokenId
-assetTracker.getItemByToken(_tokenId, function(error, result) {
-  if (error) {
-    console.log(error);
-  } else {
-    console.log(result);
-  }
-})
-
-// Set reserved address 
-assetTracker.setReserved(_tokenId, _reservedBuyer, function(error, result) {
-  if(error) {
-    console.log(error);
-  } else {
-    console.log(result);
-  }
-})
-
-// Buy an item
-assetTracker.buyItem(_tokenId, {'value': _value}, function(error, result) {
-  if(error) {
-    console.log(error);
-  } else {
-    console.log(result);
-  }
-})
-
-// Watch for transfer event 
-assetTracker.Transfer().watch(function(error, result) {
-  if(error) {
-    console.log(error);
-  } else {
-    console.log(result);
-  }
-})
-
-
-// Burn an item
-
-assetTracker.burnItem(_tokenId, function(error, result) {
-  if(error) {
-    console.log(error);
-  } else {
-    console.log(result);
-  }
+$('#getOwner').click( function() {
+  web3.eth.defaultAccount = web3.eth.accounts[0];
+  assetTracker.ownerOf($('#tokenId').val(), function(error, result) {
+    if (error) {
+      alert(error);
+      location.reload();
+    } else {
+      $('#address').val(result);
+    }
+  })
 })
 
 </script>
-
-</html>

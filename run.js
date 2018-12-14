@@ -4,7 +4,8 @@ const express = require('express');
 const app = express();
 const path = require('path');
 
-const port = process.env.PORT || 8000;
+// const port = process.env.PORT || 8000;
+const port = 8000;
 
 app.listen(port, () => {
 	console.log(`App is listening on ${port}`);
@@ -24,4 +25,9 @@ app.get('/', (req, res) => {
 // Calling the register.ejs file from the views folder when on /register/
 app.get('/register/', (req, res) => { 
 	res.render('register');
+});
+
+// Calling the owner.ejs file from the views folder when on /owner/
+app.get('/owner/', (req, res) => { 
+	res.render('owner');
 });
